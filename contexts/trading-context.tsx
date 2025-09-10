@@ -306,17 +306,21 @@ export function TradingProvider({ children }: { children: ReactNode }) {
   }, [state.settings])
 
   const addTrade = (tradeData: Omit<Trade, "id" | "pnl" | "percentage" | "timestamp" | "createdAt">) => {
-    const pnl =
+    const grossPnl =
       tradeData.type === "buy"
         ? (tradeData.exitPrice - tradeData.entryPrice) * tradeData.quantity
         : (tradeData.entryPrice - tradeData.exitPrice) * tradeData.quantity
 
-    const percentage = (pnl / (tradeData.entryPrice * tradeData.quantity)) * 100
+    const commission = tradeData.commission || 0
+    const swap = tradeData.swap || 0
+    const netPnl = grossPnl - commission - swap
+
+    const percentage = (netPnl / (tradeData.entryPrice * tradeData.quantity)) * 100
 
     const trade: Trade = {
       ...tradeData,
       id: Date.now().toString(),
-      pnl,
+      pnl: netPnl,
       percentage,
       timestamp: new Date(`${tradeData.date}T${tradeData.time}`).toISOString(),
       createdAt: new Date().toISOString(),

@@ -158,7 +158,7 @@ export function TradingCalendar({ onEditTrade }: TradingCalendarProps) {
                               }`}
                             >
                               {dayData.totalPercentage > 0 ? "+" : ""}
-                              {dayData.totalPercentage.toFixed(1)}%
+                              {dayData.totalPercentage.toFixed(2)}%
                             </div>
                           )}
                         </div>
@@ -175,7 +175,7 @@ export function TradingCalendar({ onEditTrade }: TradingCalendarProps) {
                           </div>
                           <div className={`text-sm font-medium ${isProfit ? "text-emerald-600" : "text-red-600"}`}>
                             {formatCurrency(dayData.totalPnl)} ({dayData.totalPercentage > 0 ? "+" : ""}
-                            {dayData.totalPercentage.toFixed(1)}%)
+                            {dayData.totalPercentage.toFixed(2)}%)
                           </div>
                         </div>
                       </TooltipContent>
@@ -210,7 +210,7 @@ export function TradingCalendar({ onEditTrade }: TradingCalendarProps) {
                               className={`text-2xl font-bold ${isProfit ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
                             >
                               {dayData.totalPercentage > 0 ? "+" : ""}
-                              {dayData.totalPercentage.toFixed(1)}%
+                              {dayData.totalPercentage.toFixed(2)}%
                             </div>
                             <div className="text-sm text-muted-foreground">Return</div>
                           </div>
@@ -228,7 +228,7 @@ export function TradingCalendar({ onEditTrade }: TradingCalendarProps) {
                                     className={`px-2 py-1 rounded text-xs font-medium ${
                                       trade.type === "buy"
                                         ? "bg-emerald-200 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
-                                        : "bg-red-200 text-red-600 dark:bg-red-900/30 dark:text-red-400"
+                                        : "bg-red-200 text-red-600 dark:bg-red-900/30 dark:hover:bg-red-900/50 dark:text-red-400"
                                     }`}
                                   >
                                     {trade.type.toUpperCase()}
@@ -287,12 +287,17 @@ export function TradingCalendar({ onEditTrade }: TradingCalendarProps) {
                                   <span className="font-medium text-foreground">{trade.exitPrice.toFixed(2)}</span>
                                 </div>
                                 <div>
-                                  <span className="block">Quantity</span>
+                                  <span className="block">Lots</span>
                                   <span className="font-medium text-foreground">{trade.quantity.toFixed(2)}</span>
                                 </div>
                                 <div>
-                                  <span className="block">Time</span>
-                                  <span className="font-medium text-foreground">{trade.time}</span>
+                                  <span className="block">Return</span>
+                                  <span
+                                    className={`font-medium ${trade.percentage > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}
+                                  >
+                                    {trade.percentage > 0 ? "+" : ""}
+                                    {trade.percentage.toFixed(2)}%
+                                  </span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-4 mt-2">

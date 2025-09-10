@@ -405,7 +405,7 @@ export function TradeEntryForm({ editingTrade, onEditComplete }: TradeEntryFormP
           {/* Quantity */}
           <div className="space-y-2">
             <Label htmlFor="quantity" className="text-sidebar-foreground">
-              Quantity / Size
+              Quantity / Size (Lots)
             </Label>
             <Input
               id="quantity"
@@ -537,21 +537,21 @@ export function TradeEntryForm({ editingTrade, onEditComplete }: TradeEntryFormP
           {/* Mood Selection */}
           <div className="space-y-2">
             <Label className="text-sidebar-foreground">Mood</Label>
-            <div className="flex gap-2 overflow-x-auto">
+            <div className="flex gap-1 justify-between">
               {moodEmojis.map((mood) => (
                 <button
                   key={mood.emoji}
                   type="button"
                   onClick={() => handleInputChange("mood", mood.emoji)}
-                  className={`flex flex-col items-center p-2 rounded-lg border-0 transition-all flex-shrink-0 min-w-[60px] ${
+                  className={`flex flex-col items-center p-2 rounded-lg border-0 transition-all flex-1 min-w-0 ${
                     formData.mood === mood.emoji
                       ? "bg-primary/20 ring-2 ring-primary"
                       : "bg-background/50 hover:bg-background/70"
                   }`}
                   title={mood.label}
                 >
-                  <span className="text-lg mb-1">{mood.emoji}</span>
-                  <span className="text-xs text-muted-foreground">{mood.label}</span>
+                  <span className="text-base mb-1">{mood.emoji}</span>
+                  
                 </button>
               ))}
             </div>

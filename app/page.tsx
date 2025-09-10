@@ -8,15 +8,16 @@ import { TradingCalendar } from "@/components/trading-calendar"
 import { TradeEntryForm } from "@/components/trade-entry-form"
 import { StatisticsDashboard } from "@/components/statistics-dashboard"
 import { RiskCalculator } from "@/components/risk-calculator"
-import { GoalsPerformance } from "@/components/goals-performance"
 import { useTrading } from "@/contexts/trading-context"
 import type { Trade } from "@/lib/types"
 
 export default function TradingJournal() {
   const { theme, setTheme } = useTheme()
-  const { state } = useTrading()
+  const { state, updateSettings } = useTrading()
   const [editingTrade, setEditingTrade] = useState<Trade | null>(null)
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false)
+  const [isEditingCapital, setIsEditingCapital] = useState(false)
+  const [capitalInput, setCapitalInput] = useState(state.settings.initialCapital.toString())
 
   const handleEditTrade = (trade: Trade) => {
     setEditingTrade(trade)
@@ -30,6 +31,14 @@ export default function TradingJournal() {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark")
+  }
+
+  const handleCapitalUpdate = () => {
+    const newCapital = Number.parseFloat(capitalInput)
+    if (!isNaN(newCapital) && newCapital > 0) {
+      updateSettings({ initialCapital: newCapital })
+      setIsEditingCapital(false)
+    }
   }
 
   return (
@@ -47,13 +56,38 @@ export default function TradingJournal() {
           <div className="flex items-center gap-2 md:gap-4">
             <div className="flex items-center gap-1 md:gap-2 px-2 md:px-4 py-1 md:py-2 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50">
               <DollarSign className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
-              <span className="text-xs md:text-sm font-medium text-foreground">
-                $
-                {state.statistics.currentEquity.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </span>
+              {isEditingCapital ? (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    value={capitalInput}
+                    onChange={(e) => setCapitalInput(e.target.value)}
+                    className="w-20 text-xs md:text-sm font-medium bg-transparent border-none outline-none text-foreground"
+                    onBlur={handleCapitalUpdate}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleCapitalUpdate()
+                      if (e.key === "Escape") {
+                        setCapitalInput(state.settings.initialCapital.toString())
+                        setIsEditingCapital(false)
+                      }
+                    }}
+                    autoFocus
+                  />
+                </div>
+              ) : (
+                <span
+                  className="text-xs md:text-sm font-medium text-foreground cursor-pointer hover:text-primary transition-colors"
+                  onClick={() => {
+                    setIsEditingCapital(true)
+                    setCapitalInput(state.statistics.currentEquity.toString())
+                  }}
+                >
+                  {state.statistics.currentEquity.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              )}
             </div>
 
             <Button
@@ -100,10 +134,6 @@ export default function TradingJournal() {
 
           <div className="mb-8">
             <RiskCalculator />
-          </div>
-
-          <div className="mb-8">
-            <GoalsPerformance />
           </div>
 
           <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
@@ -153,10 +183,6 @@ export default function TradingJournal() {
 
                 <div>
                   <RiskCalculator />
-                </div>
-
-                <div>
-                  <GoalsPerformance />
                 </div>
 
                 <Card className="border-0 shadow-sm bg-card/50 backdrop-blur-sm">
